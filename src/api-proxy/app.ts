@@ -1,0 +1,1 @@
+import { sessionLambdaHandler } from './session';
