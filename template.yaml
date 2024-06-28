@@ -14,8 +14,8 @@ Resources:
   CheckSessionFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: src/api-proxy
-      Handler: session.LambdaHandler
+      CodeUri: src/api-proxy/
+      Handler: session.lambdaHandler
       Runtime: nodejs20.x
       Architectures:
         - x86_64
@@ -33,6 +33,26 @@ Resources:
         Sourcemap: true
         EntryPoints: 
         - session.ts
+  CreateSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/api-proxy
+      Handler: createSession.lambdaHandler
+      Runtime: nodejs20.x
+      Events:
+        CreateSession:
+          Type: Api
+          Properties:
+            Path: /create
+            Method: get
+    Metadata:
+        BuildMethod: esbuild
+        BuildProperties:
+          Minify: true
+          Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - createSession.ts
 
 Outputs:
   CheckSessionFunction:
