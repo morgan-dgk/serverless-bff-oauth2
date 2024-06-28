@@ -1,4 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { DynamoDBClient, GetItemCommand } from '@aws-sdk/client-dynamodb';
+import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 
 /**
  *
@@ -10,10 +12,27 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
  *
  */
 
-export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    return {
-        statusCode: 200,
-        headers: { headerName: 'headerValue' },
-        body: JSON.stringify({}),
+const DOCKER_NETWORK_BRIDGE_ADDR = 'http://172.17.0.1';
+
+const dynamodbClient = new DynamoDBClient({
+    endpoint: `${DOCKER_NETWORK_BRIDGE_ADDR}:8000`,
+    region: 'fakeRegion',
+    credentials: { accessKeyId: 'fakeMyKeyId', secretAccessKey: 'fakeSecretAccessKey' },
+});
+
+type SessionInfo = {
+    accessToken: string;
+    refreshToken: string;
+    isActive: boolean;
+};
+
+type AuthResponse = {
+    isAuthorized: boolean;
+};
+
+const getSessionInfo = async (sessionId: string): Promise<SessionInfo | undefined> => {
+    const getItemCommandInput = {
+        Key: { sessionId: marshall(sessionId) },
+        TableName: 'Sessions',
     };
 };
