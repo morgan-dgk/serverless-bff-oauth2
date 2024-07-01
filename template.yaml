@@ -33,17 +33,17 @@ Resources:
         Sourcemap: true
         EntryPoints: 
         - session.ts
-  CreateSessionFunction:
+  OauthRedirectFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/api-proxy
-      Handler: createSession.lambdaHandler
+      Handler: auth.lambdaHandler
       Runtime: nodejs20.x
       Events:
         CreateSession:
           Type: Api
           Properties:
-            Path: /create
+            Path: /auth
             Method: get
     Metadata:
         BuildMethod: esbuild
@@ -52,8 +52,27 @@ Resources:
           Target: "es2020"
         Sourcemap: true
         EntryPoints:
-          - createSession.ts
-
+          - auth.ts
+  OauthLoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/api-proxy
+      Handler: login.lambdaHandler
+      Runtime: nodejs20.x
+      Events:
+        Login:
+          Type: Api
+          Properties:
+            Path: /login
+            Method: get
+    Metadata:
+        BuildMethod: esbuild
+        BuildProperties:
+          Minify: true
+          Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - login.ts
 Outputs:
   CheckSessionFunction:
     Value: !GetAtt CheckSessionFunction.Arn
